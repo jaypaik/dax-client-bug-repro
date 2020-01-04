@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+source /app/env/bin/activate
+
+python manage.py migrate --noinput
+
+exec /tini -- mod_wsgi-express start-server \
+  --port 80 \
+  --user www-data \
+  --group www-data \
+  --log-level info \
+  --log-to-terminal \
+  --startup-log \
+  --server-status \
+  --server-mpm event \
+  --processes 4 \
+  --threads 4 \
+  --url-alias /static static \
+  --application-type module \
+  mysite.wsgi
